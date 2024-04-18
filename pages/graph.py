@@ -2,7 +2,6 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
-import mysql.connector
 
 class GraphPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -24,19 +23,33 @@ class GraphPage(tk.Frame):
         if self.user_id is not None:
             self.user_id_label.config(text=f"User ID: {self.user_id}")
             self.draw_user_financials()
-    
+
     def update_for_user(self, user_id):
-        print(f"Updating EditPage with user ID: {user_id}")
         self.user_id = user_id
         self.user_id_label.config(text=f"User ID: {self.user_id}")
-        
+        self.draw_user_financials()
+
     def draw_user_financials(self):
-        # Dummy data for the example; replace with your actual data retrieval and plotting logic
-        data = [10, 20, 30, 40, 50]  # Example data
-        fig = Figure(figsize=(5, 4), dpi=100)
-        plot = fig.add_subplot(1, 1, 1)
-        plot.plot(data, 'r-')
-        
+        fig = Figure(figsize=(10, 4), dpi=100)
+
+        # Line plot
+        ax1 = fig.add_subplot(121)
+        data1 = np.random.rand(10)
+        ax1.plot(data1, 'r-')
+        ax1.set_title('Random Line Plot')
+        ax1.set_xlabel('X axis')
+        ax1.set_ylabel('Y axis')
+
+        # Bar chart
+        ax2 = fig.add_subplot(122)
+        data2 = np.random.randint(1, 10, size=5)
+        ax2.bar(np.arange(len(data2)), data2, color='blue')
+        ax2.set_title('Random Bar Chart')
+        ax2.set_xlabel('Categories')
+        ax2.set_ylabel('Values')
+
+        # Drawing the canvas
         canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
