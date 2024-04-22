@@ -1,4 +1,11 @@
 Alex Sigua:
-    - Set up the login , create account, and change password features
     - Constructed general screen artitecture
+    - Change password fucntionality
     - Handled update, delete, and inserting to DB
+    - GUI for edit page
+
+Cedric Mohbat: 
+    - Set up the login and create account
+    - GUI for splash page
+    - created schema
+
