@@ -1,0 +1,4 @@
+Alex Sigua:
+    - Set up the login , create account, and change password features
+    - Constructed general screen artitecture
+    - Handled update, delete, and inserting to DB
