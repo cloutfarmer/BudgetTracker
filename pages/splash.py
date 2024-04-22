@@ -11,7 +11,7 @@ def create_db_connection():
             host='localhost',
             database='BudgetTracker',
             user='root',
-            password='Database123'
+            password='Louis269*'
         )
     except Error as e:
         messagebox.showerror("Error", f"Failed to connect to the database: {e}")
