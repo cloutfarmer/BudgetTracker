@@ -1,6 +1,6 @@
 Alex Sigua:
-    - Constructed general screen artitecture
-    - Change password fucntionality
+    - Constructed general screen architecture
+    - Change password functionality
     - Handled update, delete, and inserting to DB
     - GUI for edit page
 
