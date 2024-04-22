@@ -34,15 +34,17 @@ class Budget:
                 INSERT INTO budget (amount, user_id, category, budgetDate)
                 VALUES (%s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (amount, self.user_id, category, budget_date))
+            cursor.execute(insert_query, (float(amount), self.user_id, category, budget_date))
+            budget_id = cursor.lastrowid  # Retrieve the last insert ID
             connection.commit()
-            messagebox.showinfo("Success", "Budget added successfully")
+            messagebox.showinfo("Success", f"Budget added successfully. Budget ID: {budget_id}")
         except Error as e:
             messagebox.showerror("Error", f"Failed to add budget: {e}")
         finally:
             if connection.is_connected():
                 cursor.close()
                 connection.close()
+
 
     def update_budget(self):
         budget_id = self.update_budget_id_entry.get()

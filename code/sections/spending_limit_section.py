@@ -17,8 +17,9 @@ class Spending_Limit:
             cursor = connection.cursor()
             insert_query = "INSERT INTO SpendingLimit (limitAmount, user_id) VALUES (%s, %s)"
             cursor.execute(insert_query, (spending_limit_amount, self.user_id))
+            sl_id = cursor.lastrowid  # Retrieve the last insert ID
             connection.commit()
-            messagebox.showinfo("Success", "Spending limit added successfully")
+            messagebox.showinfo("Success", f"Spending Limit added successfully. Spending Limit ID: {sl_id}")
         except Error as e:
             messagebox.showerror("Error", f"Failed to add spending limit: {e}")
         finally:

@@ -37,8 +37,9 @@ class Income:
             VALUES (%s, %s, %s, %s, %s)
             """
             cursor.execute(insert_query, (self.user_id, total_amount_of_income, source, date_of_income, description))
+            income_id = cursor.lastrowid  # Retrieve the last insert ID
             connection.commit()
-            messagebox.showinfo("Success", "Income added successfully")
+            messagebox.showinfo("Success", f"Income added successfully. Income ID: {income_id}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add income: {e}")
         finally:

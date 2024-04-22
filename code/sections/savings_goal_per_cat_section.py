@@ -21,8 +21,9 @@ class Savings_Goal_Per_Cat:
                 VALUES (%s, %s, %s)
             """
             cursor.execute(insert_query, (saving_amount, self.user_id, category))
+            sgpc_id = cursor.lastrowid  # Retrieve the last insert ID
             connection.commit()
-            messagebox.showinfo("Success", "Savings goal per category added successfully")
+            messagebox.showinfo("Success", f"Savings goal per category added successfully. ID: {sgpc_id}")
         except Error as e:
             messagebox.showerror("Error", f"Failed to add savings goal per category: {e}")
         finally:

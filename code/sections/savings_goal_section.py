@@ -20,8 +20,9 @@ class Savings_Goal:
             cursor = connection.cursor()
             insert_query = "INSERT INTO SavingGoal (goalAmount, current_amount, deadline, description, user_id) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(insert_query, (goal_amount, current_amount, deadline, description, self.user_id))
+            sg_id = cursor.lastrowid  # Retrieve the last insert ID
             connection.commit()
-            messagebox.showinfo("Success", "Savings goal added successfully")
+            messagebox.showinfo("Success", f"Savings goal added successfully. Savings Goal ID: {sg_id}")
         except Error as e:
             messagebox.showerror("Error", f"Failed to add savings goal: {e}")
         finally:

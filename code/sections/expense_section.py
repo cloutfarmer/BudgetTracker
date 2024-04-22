@@ -36,8 +36,9 @@ class Expense:
                 VALUES (%s, %s, %s, %s, %s)
             """
             cursor.execute(insert_query, (date_of_transaction, amount, self.user_id, category, description))
+            expense_id = cursor.lastrowid  # Retrieve the last insert ID
             connection.commit()
-            messagebox.showinfo("Success", "Expense added successfully")
+            messagebox.showinfo("Success", f"Expense added successfully. Expense ID: {expense_id}")
         except Error as e:
             messagebox.showerror("Error", f"Failed to add expense: {e}")
         finally:
