@@ -11,7 +11,7 @@ class MainApplication(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.title("Budget Tracker")
-        self.geometry("800x600")
+        self.geometry("1024x768")
         self.user_id = None 
         self.user_role = None
 

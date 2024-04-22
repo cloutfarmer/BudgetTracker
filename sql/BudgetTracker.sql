@@ -101,6 +101,8 @@ INSERT INTO expense (user_id, amount, category, dateOfTransaction, description) 
 (4, 60.00, 'Health', '2023-02-15', 'Monthly prescription meds'),
 (4, 250.00, 'Fun', '2023-01-18', 'New headphones'),
 (4, 300.00, 'Travel', '2023-01-22', 'Weekend getaway booking');
+(5, 250.00, 'Utilities', '2024-04-10', 'Electricity bill'),
+(5, 100.00, 'Groceries', '2024-04-12', 'Weekly groceries');
 
 -- Insert data into income
 INSERT INTO income (user_id, TotalAmountOfIncome, source, dateOfIncome, description) VALUES 
@@ -111,6 +113,8 @@ INSERT INTO income (user_id, TotalAmountOfIncome, source, dateOfIncome, descript
 (2, 2500.00, 'Consulting', '2023-10-18', 'Consulting fees from client'),
 (3, 3000.00, 'Product Sales', '2023-10-07', 'Software product sales revenue'),
 (4, 12000.00, 'Project Delivery', '2023-10-20', 'Payment received for completed construction project');
+(5, 1200.00, 'Salary', '2024-04-15', 'Monthly salary'),
+(5, 200.00, 'Freelancing', '2024-04-18', 'Web design project');
 
 -- Insert data into savinggoal
 INSERT INTO savinggoal (user_id, goalAmount, current_amount, deadline, description) VALUES 
