@@ -16,7 +16,7 @@ class Spending_Limit_Per_Cat:
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            insert_query = "INSERT INTO SpendingLimitPerCategory (categoryId, userId, spendinglimitAmountpercategory) VALUES (%s, %s, %s)"
+            insert_query = "INSERT INTO SpendingLimitPerCategory (categoryId, user_id, spendinglimitAmountpercategory) VALUES (%s, %s, %s)"
             cursor.execute(insert_query, (category_id, self.user_id, limit_amount))
             connection.commit()
             messagebox.showinfo("Success", "Spending limit per category added successfully")
@@ -34,10 +34,14 @@ class Spending_Limit_Per_Cat:
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            update_query = "UPDATE SpendingLimitPerCategory SET spendinglimitAmountpercategory = %s WHERE spendinglimitpercatid = %s AND userId = %s"
+            update_query = "UPDATE SpendingLimitPerCategory SET spendinglimitAmountpercategory = %s WHERE spendinglimitpercatid = %s AND user_id = %s"
             cursor.execute(update_query, (new_limit_amount, category_id, self.user_id))
-            connection.commit()
-            messagebox.showinfo("Success", "Spending limit per category updated successfully")
+            affected_rows = cursor.rowcount  
+            if affected_rows == 0:
+                messagebox.showwarning("Update Failed", "No spedning limit per category updated. Please check if the record exists and belongs to you.")
+            else:
+                connection.commit()
+                messagebox.showinfo("Success", "Spending limit per category updated successfully")
         except Error as e:
             messagebox.showerror("Error", f"Failed to update spending limit per category: {e}")
         finally:
@@ -50,10 +54,14 @@ class Spending_Limit_Per_Cat:
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            delete_query = "DELETE FROM SpendingLimitPerCategory WHERE spendinglimitpercatid = %s AND userId = %s"
+            delete_query = "DELETE FROM SpendingLimitPerCategory WHERE spendinglimitpercatid = %s AND user_id = %s"
             cursor.execute(delete_query, (category_id, self.user_id))
-            connection.commit()
-            messagebox.showinfo("Success", "Spending limit per category deleted successfully")
+            affected_rows = cursor.rowcount  
+            if affected_rows == 0:
+                messagebox.showwarning("Delete Failed", "No spending limit per category deleted. Please check if the record exists and belongs to you.")
+            else:
+                connection.commit()
+                messagebox.showinfo("Success", "Spending limit per category deleted successfully")
         except Error as e:
             messagebox.showerror("Error", f"Failed to delete spending limit per category: {e}")
         finally:
@@ -113,7 +121,7 @@ class Spending_Limit_Per_Cat:
         connection = create_db_connection()
         try:
             cursor = connection.cursor()
-            query = "SELECT dateOfIncome, TotalAmountOfIncome FROM Income WHERE userId = %s"
+            query = "SELECT dateOfIncome, TotalAmountOfIncome FROM Income WHERE user_id = %s"
             cursor.execute(query, (self.user_id,))
         except Exception as e:
             messagebox.showerror("Error", f"Could not fetch income data: {e}")

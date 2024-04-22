@@ -49,7 +49,7 @@ class SplashPage(tk.Frame):
         self.new_password_entry.pack()
 
         tk.Label(create_account_frame, text="Role:").pack()
-        self.role_combobox = ttk.Combobox(create_account_frame, values=["admin", "analyst", "user"])
+        self.role_combobox = ttk.Combobox(create_account_frame, values=["admin", "buisness owner", "analyst", "user"])
         self.role_combobox.pack()
 
         tk.Button(create_account_frame, text="Create Account", command=self.create_account).pack(pady=10)
@@ -80,10 +80,19 @@ class SplashPage(tk.Frame):
     def create_account(self):
         new_username = self.new_username_entry.get()
         new_password = self.new_password_entry.get().encode('utf-8')
-        selected_role = self.role_combobox.get()
+        selected_role = self.role_combobox.get().strip()  # Trim any whitespace
 
-        if not selected_role:
-            messagebox.showerror("Error", "Please select a role.")
+        # Normalize the input to match database ENUM values
+        role_map = {
+            "admin": "admin",
+            "analyst": "analyst",
+            "business owner": "businessOwner",  # Correct the label if necessary in Combobox
+            "user": "user"
+        }
+        normalized_role = role_map.get(selected_role.lower())  # Ensure the Combobox value maps correctly
+
+        if not normalized_role:
+            messagebox.showerror("Error", "Invalid role selected. Please select a valid role.")
             return
 
         connection = create_db_connection()
@@ -99,7 +108,7 @@ class SplashPage(tk.Frame):
 
         query = "INSERT INTO UserInfo (username, hashed_password, role) VALUES (%s, %s, %s)"
         try:
-            cursor.execute(query, (new_username, hashed_password.decode('utf-8'), selected_role))
+            cursor.execute(query, (new_username, hashed_password.decode('utf-8'), normalized_role))
             connection.commit()
             messagebox.showinfo("Account created", "Your account has been created successfully")
         except mysql.connector.Error as err:
@@ -107,3 +116,5 @@ class SplashPage(tk.Frame):
         finally:
             cursor.close()
             connection.close()
+
+

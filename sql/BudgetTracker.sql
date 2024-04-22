@@ -48,11 +48,18 @@ CREATE TABLE savinggoal (
 );
 
 CREATE TABLE savinggoalpercat (
-    savinggoalpercatId INT AUTO_INCREMENT PRIMARY KEY
+    savinggoalpercatId INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    category VARCHAR(100) NOT NULL,
+    savingAmount DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES userinfo(user_id)
 );
 
 CREATE TABLE spendinglimit (
-    spendinglimitId INT AUTO_INCREMENT PRIMARY KEY
+    spendinglimitId INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    limitAmount DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES userinfo(user_id)
 );
 
 CREATE TABLE budget (

@@ -6,21 +6,21 @@ from mysql.connector import Error
 class Savings_Goal_Per_Cat:
     def __init__(self, root, create_db_connection, user_id):
         self.create_db_connection = create_db_connection
-        self.user_id = user_id  # Set from EditPage when instantiated
+        self.user_id = user_id  
         self.setup_savings_goal_per_category_section(root)
 
     def add_saving_goal_per_category(self):
-        category_id = self.category_id_entry.get()
+        category = self.category_id_entry.get()
         saving_amount = self.saving_amount_per_category_entry.get()
 
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
             insert_query = """
-                INSERT INTO SavingGoalPerCategory (savingAmountPerCategory, userId, categoryId) 
+                INSERT INTO SavingGoalPerCat (savingAmount, user_id, category) 
                 VALUES (%s, %s, %s)
             """
-            cursor.execute(insert_query, (saving_amount, self.user_id, category_id))
+            cursor.execute(insert_query, (saving_amount, self.user_id, category))
             connection.commit()
             messagebox.showinfo("Success", "Savings goal per category added successfully")
         except Error as e:
@@ -32,14 +32,18 @@ class Savings_Goal_Per_Cat:
 
     def delete_saving_goal_per_category(self):
         saving_goal_per_cat_id = self.delete_saving_goal_per_cat_id_entry.get()
-        print(saving_goal_per_cat_id)
+
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            delete_query = "DELETE FROM SavingGoalPerCategory WHERE savingGoalPerCatId = %s AND userId = %s"
+            delete_query = "DELETE FROM SavingGoalPerCat WHERE savingGoalPerCatId = %s AND user_id = %s"
             cursor.execute(delete_query, (saving_goal_per_cat_id, self.user_id))
-            connection.commit()
-            messagebox.showinfo("Success", "Savings goal per category deleted successfully")
+            affected_rows = cursor.rowcount
+            if affected_rows == 0:
+                messagebox.showwarning("Delete Failed", "No savings goal per category deleted. Please check if the record exists and belongs to you.")
+            else:
+                connection.commit()
+                messagebox.showinfo("Success", "Savings goal per category deleted successfully")
         except Error as e:
             messagebox.showerror("Error", f"Failed to delete savings goal per category: {e}")
         finally:
@@ -47,22 +51,26 @@ class Savings_Goal_Per_Cat:
                 cursor.close()
                 connection.close()
 
-    def update_saving_goal_per_category(self):  
+    def update_saving_goal_per_category(self):
         saving_goal_per_cat_id = self.update_saving_goal_per_cat_id_entry.get()
         new_saving_amount = self.update_saving_amount_per_category_entry.get()
-        category_id = self.update_category_id_entry.get()
+        category = self.update_category_id_entry.get()
 
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
             update_query = """
-                UPDATE SavingGoalPerCategory 
-                SET savingAmountPerCategory = %s, categoryId = %s
-                WHERE savingGoalPerCatId = %s AND userId = %s
+                UPDATE SavingGoalPerCat 
+                SET savingAmount = %s, category = %s
+                WHERE savinggoalpercatId = %s AND user_id = %s
             """
-            cursor.execute(update_query, (new_saving_amount, category_id, saving_goal_per_cat_id, self.user_id))
-            connection.commit()
-            messagebox.showinfo("Success", "Savings goal per category updated successfully")
+            cursor.execute(update_query, (new_saving_amount, category, saving_goal_per_cat_id, self.user_id))
+            affected_rows = cursor.rowcount
+            if affected_rows == 0:
+                messagebox.showwarning("Update Failed", "No savings goal per category updated. Please check if the record exists and belongs to you.")
+            else:
+                connection.commit()
+                messagebox.showinfo("Success", "Savings goal per category updated successfully")
         except Error as e:
             messagebox.showerror("Error", f"Failed to update savings goal per category: {e}")
         finally:
@@ -79,7 +87,7 @@ class Savings_Goal_Per_Cat:
         self.setup_update_savings_goal_per_category_frame(label_frame)
 
     def setup_add_savings_goal_per_category_frame(self, parent):
-        tk.Label(parent, text="Category ID:").pack(fill='x', expand=True)
+        tk.Label(parent, text="Category:").pack(fill='x', expand=True)
         self.category_id_entry = tk.Entry(parent)
         self.category_id_entry.pack(fill='x', expand=True)
 
@@ -107,36 +115,12 @@ class Savings_Goal_Per_Cat:
         self.update_saving_amount_per_category_entry = tk.Entry(parent)
         self.update_saving_amount_per_category_entry.pack(fill='x', expand=True)
 
-        # Add the missing entry for updating category ID
-        tk.Label(parent, text="Category ID:").pack(fill='x', expand=True)
-        self.update_category_id_entry = tk.Entry(parent)  # This was missing and is likely the source of your error
+        tk.Label(parent, text="Category:").pack(fill='x', expand=True)
+        self.update_category_id_entry = tk.Entry(parent)
         self.update_category_id_entry.pack(fill='x', expand=True)
 
         update_button = tk.Button(parent, text="Update Savings Goal Per Category", command=self.update_saving_goal_per_category)
         update_button.pack(fill='x', expand=True, pady=4)
-
-
-    def update_for_user(self, user_id):
-        self.user_id = user_id
-        # Optionally refresh the data shown in this section
-        self.refresh_data()
-
-    def refresh_data(self):
-        if not self.user_id:
-            return
-        connection = create_db_connection()
-        try:
-            cursor = connection.cursor()
-            query = "SELECT categoryId, savingAmountPerCategory FROM SavingGoalPerCategory WHERE userId = %s"
-            cursor.execute(query, (self.user_id,))
-            data = cursor.fetchall()
-            print("Data refreshed for user:", self.user_id)
-        except Exception as e:
-            messagebox.showerror("Error", f"Could not fetch savings goal per category data: {e}")
-        finally:
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
 
 def test_connection():
     try:

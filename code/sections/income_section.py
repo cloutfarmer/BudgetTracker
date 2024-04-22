@@ -33,7 +33,7 @@ class Income:
 
             # Adjust the SQL query to include source and description
             insert_query = """
-            INSERT INTO Income (userId, TotalAmountOfIncome, source, dateOfIncome, description)
+            INSERT INTO Income (user_id, TotalAmountOfIncome, source, dateOfIncome, description)
             VALUES (%s, %s, %s, %s, %s)
             """
             cursor.execute(insert_query, (self.user_id, total_amount_of_income, source, date_of_income, description))
@@ -53,7 +53,7 @@ class Income:
             connection = create_db_connection()
             cursor = connection.cursor()
 
-            delete_query = "DELETE FROM Income WHERE IncomeId = %s AND userId = %s"
+            delete_query = "DELETE FROM Income WHERE IncomeId = %s AND user_id = %s"
             cursor.execute(delete_query, (income_id, self.user_id))
             affected_rows = cursor.rowcount
             if affected_rows == 0:
@@ -82,7 +82,7 @@ class Income:
             update_query = """
             UPDATE Income
             SET dateOfIncome = %s, TotalAmountOfIncome = %s, source = %s, description = %s
-            WHERE IncomeId = %s AND userId = %s
+            WHERE IncomeId = %s AND user_id = %s
             """
             cursor.execute(update_query, (new_date_of_income, new_total_amount_of_income, new_source, new_description, income_id, self.user_id))
             affected_rows = cursor.rowcount  
@@ -168,7 +168,7 @@ class Income:
         connection = create_db_connection()
         try:
             cursor = connection.cursor()
-            query = "SELECT dateOfIncome, TotalAmountOfIncome FROM Income WHERE userId = %s"
+            query = "SELECT dateOfIncome, TotalAmountOfIncome FROM Income WHERE user_id = %s"
             cursor.execute(query, (self.user_id,))
             data = cursor.fetchall()
             print("Data refreshed for user:", self.user_id)

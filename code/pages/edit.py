@@ -8,6 +8,7 @@ from sections.savings_goal_section import Savings_Goal
 from sections.savings_goal_per_cat_section import Savings_Goal_Per_Cat
 from sections.spending_limit_section import Spending_Limit
 from sections.spending_limit_per_cat_section import Spending_Limit_Per_Cat
+from sections.budget_section import Budget
 
 def create_db_connection():
     connection = None
@@ -59,8 +60,8 @@ class EditPage(tk.Frame):
         self.setup_section(Expense, "Expense Section", self.user_id)
         self.setup_section(Savings_Goal, "Savings Goal Section", self.user_id)  
         self.setup_section(Savings_Goal_Per_Cat, "Savings Goal Per Category Section", self.user_id)  
-        self.setup_section(Spending_Limit, "Spending Limit Section", self.user_id)  
-        self.setup_section(Spending_Limit_Per_Cat, "Spending Limit Per Category Section", self.user_id)
+        self.setup_section(Spending_Limit, "Spending Limit Section", self.user_id)
+        self.setup_section(Budget, "Budget Section", self.user_id)    
 
     def setup_section(self, section_class, title, user_id):
         frame = tk.Frame(self.sections_frame, borderwidth=2, relief="groove")

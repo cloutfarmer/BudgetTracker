@@ -8,15 +8,18 @@ class Savings_Goal:
         self.create_db_connection = create_db_connection
         self.user_id = user_id  # Set from EditPage when instantiated
         self.setup_savings_goal_section(root)
-
+    
     def add_saving_goal(self):
         goal_amount = self.goal_amount_entry.get()
+        current_amount = self.current_amount_entry.get()
+        deadline = self.deadline_entry.get()
+        description = self.description_entry.get()
 
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            insert_query = "INSERT INTO SavingGoal (goalAmount, userId) VALUES (%s, %s)"
-            cursor.execute(insert_query, (goal_amount, self.user_id))
+            insert_query = "INSERT INTO SavingGoal (goalAmount, current_amount, deadline, description, user_id) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(insert_query, (goal_amount, current_amount, deadline, description, self.user_id))
             connection.commit()
             messagebox.showinfo("Success", "Savings goal added successfully")
         except Error as e:
@@ -29,14 +32,21 @@ class Savings_Goal:
     def update_saving_goal(self):
         saving_goal_id = self.saving_goal_id_entry.get()
         new_goal_amount = self.update_goal_amount_entry.get()
+        new_current_amount = self.update_current_amount_entry.get()
+        new_deadline = self.update_deadline_entry.get()
+        new_description = self.update_description_entry.get()
 
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            update_query = "UPDATE SavingGoal SET goalAmount = %s WHERE savingGoalId = %s AND userId = %s"
-            cursor.execute(update_query, (new_goal_amount, saving_goal_id, self.user_id))
-            connection.commit()
-            messagebox.showinfo("Success", "Savings goal updated successfully")
+            update_query = "UPDATE SavingGoal SET goalAmount = %s, current_amount = %s, deadline = %s, description = %s WHERE savingGoalId = %s AND user_id = %s"
+            cursor.execute(update_query, (new_goal_amount, new_current_amount, new_deadline, new_description, saving_goal_id, self.user_id))
+            affected_rows = cursor.rowcount  
+            if affected_rows == 0:
+                messagebox.showwarning("Update Failed", "No savings goal updated. Please check if the record exists and belongs to you.")
+            else:
+                connection.commit()
+                messagebox.showinfo("Success", "Savings goal updated successfully")
         except Error as e:
             messagebox.showerror("Error", f"Failed to update savings goal: {e}")
         finally:
@@ -50,10 +60,14 @@ class Savings_Goal:
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            delete_query = "DELETE FROM SavingGoal WHERE savingGoalId = %s AND userId = %s"
+            delete_query = "DELETE FROM SavingGoal WHERE savingGoalId = %s AND user_id = %s"
             cursor.execute(delete_query, (saving_goal_id, self.user_id))
-            connection.commit()
-            messagebox.showinfo("Success", "Savings goal deleted successfully")
+            affected_rows = cursor.rowcount  
+            if affected_rows == 0:
+                messagebox.showwarning("Delete Failed", "No savings goal deleted. Please check if the record exists and belongs to you.")
+            else:
+                connection.commit()
+                messagebox.showinfo("Success", "Savings goal deleted successfully")
         except Error as e:
             messagebox.showerror("Error", f"Failed to delete savings goal: {e}")
         finally:
@@ -70,10 +84,21 @@ class Savings_Goal:
         self.setup_update_savings_goal_frame(savings_goal_label_frame)
 
     def setup_add_savings_goal_frame(self, parent):
-
         tk.Label(parent, text="Goal Amount:").pack(fill='x', expand=True)
         self.goal_amount_entry = tk.Entry(parent)
         self.goal_amount_entry.pack(fill='x', expand=True)
+        
+        tk.Label(parent, text="Current Amount:").pack(fill='x', expand=True)
+        self.current_amount_entry = tk.Entry(parent)
+        self.current_amount_entry.pack(fill='x', expand=True)
+
+        tk.Label(parent, text="Deadline (YYYY-MM-DD):").pack(fill='x', expand=True)
+        self.deadline_entry = tk.Entry(parent)
+        self.deadline_entry.pack(fill='x', expand=True)
+
+        tk.Label(parent, text="Description:").pack(fill='x', expand=True)
+        self.description_entry = tk.Entry(parent)
+        self.description_entry.pack(fill='x', expand=True)
 
         add_button = tk.Button(parent, text="Add Savings Goal", command=self.add_saving_goal, bg='green', fg='white')
         add_button.pack(fill='x', expand=True, pady=4)
@@ -88,39 +113,27 @@ class Savings_Goal:
 
     def setup_update_savings_goal_frame(self, parent):
         tk.Label(parent, text="Savings Goal ID:").pack(fill='x', expand=True)
-        self.saving_goal_id_entry = tk.Entry(parent)  # Note: This overwrites the delete frame's saving_goal_id_entry
+        self.saving_goal_id_entry = tk.Entry(parent)
         self.saving_goal_id_entry.pack(fill='x', expand=True)
 
         tk.Label(parent, text="New Goal Amount:").pack(fill='x', expand=True)
         self.update_goal_amount_entry = tk.Entry(parent)
         self.update_goal_amount_entry.pack(fill='x', expand=True)
 
+        tk.Label(parent, text="New Current Amount:").pack(fill='x', expand=True)
+        self.update_current_amount_entry = tk.Entry(parent)
+        self.update_current_amount_entry.pack(fill='x', expand=True)
+
+        tk.Label(parent, text="New Deadline (YYYY-MM-DD):").pack(fill='x', expand=True)
+        self.update_deadline_entry = tk.Entry(parent)
+        self.update_deadline_entry.pack(fill='x', expand=True)
+
+        tk.Label(parent, text="New Description:").pack(fill='x', expand=True)
+        self.update_description_entry = tk.Entry(parent)
+        self.update_description_entry.pack(fill='x', expand=True)
+
         update_button = tk.Button(parent, text="Update Savings Goal", command=self.update_saving_goal)
         update_button.pack(fill='x', expand=True, pady=4)
-
-    def update_for_user(self, user_id):
-        self.user_id = user_id  # Update the internal user_id
-        # Optionally refresh the data shown in this section
-        self.refresh_data()
-
-    def refresh_data(self):
-        # This method should clear existing data and fetch new data based on self.user_id
-        if not self.user_id:
-            return  # Do nothing if user_id is not set
-        connection = create_db_connection()
-        try:
-            cursor = connection.cursor()
-            query = "SELECT dateOfIncome, TotalAmountOfIncome FROM Income WHERE userId = %s"
-            cursor.execute(query, (self.user_id,))
-            data = cursor.fetchall()
-            # Update your UI components with this data
-            print("Data refreshed for user:", self.user_id)
-        except Exception as e:
-            messagebox.showerror("Error", f"Could not fetch income data: {e}")
-        finally:
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
 
 def create_db_connection():
     connection = None

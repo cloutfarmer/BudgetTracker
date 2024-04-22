@@ -15,7 +15,7 @@ class Spending_Limit:
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            insert_query = "INSERT INTO SpendingLimit (spendingLimitAmount, userId) VALUES (%s, %s)"
+            insert_query = "INSERT INTO SpendingLimit (limitAmount, user_id) VALUES (%s, %s)"
             cursor.execute(insert_query, (spending_limit_amount, self.user_id))
             connection.commit()
             messagebox.showinfo("Success", "Spending limit added successfully")
@@ -33,10 +33,14 @@ class Spending_Limit:
         try:
             connection = create_db_connection()
             cursor = connection.cursor()
-            update_query = "UPDATE SpendingLimit SET spendingLimitAmount = %s WHERE spendingLimitId = %s"
+            update_query = "UPDATE SpendingLimit SET limitAmount = %s WHERE spendinglimitId = %s"
             cursor.execute(update_query, (new_spending_limit_amount, spending_limit_id))
-            connection.commit()
-            messagebox.showinfo("Success", "Spending limit updated successfully")
+            affected_rows = cursor.rowcount  
+            if affected_rows == 0:
+                messagebox.showwarning("Update Failed", "No spending limit updated. Please check if the record exists and belongs to you.")
+            else:
+                connection.commit()
+                messagebox.showinfo("Success", "Spending limit updated successfully")
         except Error as e:
             messagebox.showerror("Error", f"Failed to update spending limit: {e}")
         finally:
@@ -52,11 +56,15 @@ class Spending_Limit:
             connection = create_db_connection()
             cursor = connection.cursor()
             
-            delete_query = "DELETE FROM SpendingLimit WHERE SpendingLimitId = %s"
-            cursor.execute(delete_query, (spending_limit_id,))
+            delete_query = "DELETE FROM SpendingLimit WHERE spendinglimitId = %s AND user_id = %s"
+            cursor.execute(delete_query, (spending_limit_id,self.user_id))
             
-            connection.commit()
-            messagebox.showinfo("Success", "Spending limit deleted successfully")
+            affected_rows = cursor.rowcount  
+            if affected_rows == 0:
+                messagebox.showwarning("Delete Failed", "No spedning limit deleted. Please check if the record exists and belongs to you.")
+            else:
+                connection.commit()
+                messagebox.showinfo("Success", "Spending limit deleted successfully")
         except Error as e:
             messagebox.showerror("Error", f"Failed to delete spending limit: {e}")
         finally:
@@ -112,7 +120,7 @@ class Spending_Limit:
         connection = create_db_connection()
         try:
             cursor = connection.cursor()
-            query = "SELECT dateOfIncome, TotalAmountOfIncome FROM Income WHERE userId = %s"
+            query = "SELECT dateOfIncome, TotalAmountOfIncome FROM Income WHERE user_id = %s"
             cursor.execute(query, (self.user_id,))
         except Exception as e:
             messagebox.showerror("Error", f"Could not fetch income data: {e}")
