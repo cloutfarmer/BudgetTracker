@@ -16,7 +16,7 @@ def create_db_connection():
             host='localhost',
             database='BudgetTracker',
             user='root',
-            password='Database123'
+            password='Louis269*'
         )
     except Error as e:
         messagebox.showerror("Error", f"Failed to connect to the database: {e}")
@@ -37,6 +37,9 @@ class EditPage(tk.Frame):
 
         tk.Button(self.top_frame, text="Go to Graph Page", command=lambda: controller.show_frame("GraphPage")).pack(side='right', padx=10, pady=10)
         tk.Button(self.top_frame, text="Go Back to Splash Page", command=lambda: controller.show_frame("SplashPage")).pack(side='left', padx=10, pady=10)
+
+        self.view_spending_btn = tk.Button(self, text="View Monthly Spending", command=self.show_monthly_spending)
+        self.view_spending_btn.pack(pady=10)
 
         self.sections_frame = tk.Frame(self)
         self.sections_frame.pack(fill='both', expand=True)
@@ -78,7 +81,9 @@ class EditPage(tk.Frame):
             connection.close()
         else:
             messagebox.showerror("Connection Test", "Failed to connect to database")
-
+    
+    def show_monthly_spending(self):
+        self.controller.show_frame("MonthlySpendingPage")
 
 
 
