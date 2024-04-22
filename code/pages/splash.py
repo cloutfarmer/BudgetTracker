@@ -21,8 +21,11 @@ class SplashPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.setup_login_section()
+        self.setup_create_account_section()
+        self.setup_change_password_section()   
 
-        # Login Section
+    def setup_login_section(self):
         login_frame = tk.LabelFrame(self, text="Login", padx=5, pady=5)
         login_frame.pack(padx=10, pady=10, fill="x")
 
@@ -36,7 +39,7 @@ class SplashPage(tk.Frame):
 
         tk.Button(login_frame, text="Login", command=self.login_user).pack(pady=10)
 
-        # Account Creation Section
+    def setup_create_account_section(self):
         create_account_frame = tk.LabelFrame(self, text="Create Account", padx=5, pady=5)
         create_account_frame.pack(padx=10, pady=10, fill="x")
 
@@ -49,11 +52,56 @@ class SplashPage(tk.Frame):
         self.new_password_entry.pack()
 
         tk.Label(create_account_frame, text="Role:").pack()
-        self.role_combobox = ttk.Combobox(create_account_frame, values=["admin", "buisness owner", "analyst", "user"])
+        self.role_combobox = ttk.Combobox(create_account_frame, values=["admin", "business owner", "analyst", "user"])
         self.role_combobox.pack()
 
         tk.Button(create_account_frame, text="Create Account", command=self.create_account).pack(pady=10)
 
+    def setup_change_password_section(self):
+        change_password_frame = tk.LabelFrame(self, text="Change Password", padx=5, pady=5)
+        change_password_frame.pack(padx=10, pady=20, fill="x")
+
+        tk.Label(change_password_frame, text="Username:").pack()
+        self.change_username_entry = tk.Entry(change_password_frame)
+        self.change_username_entry.pack()
+
+        tk.Label(change_password_frame, text="Current Password:").pack()
+        self.current_password_entry = tk.Entry(change_password_frame, show="*")
+        self.current_password_entry.pack()
+
+        tk.Label(change_password_frame, text="New Password:").pack()
+        self.new_password_entry = tk.Entry(change_password_frame, show="*")
+        self.new_password_entry.pack()
+
+        tk.Button(change_password_frame, text="Update Password", command=self.change_password).pack(pady=10)
+
+    def change_password(self):
+        username = self.change_username_entry.get()
+        current_password = self.current_password_entry.get().encode('utf-8')
+        new_password = self.new_password_entry.get().encode('utf-8')
+
+        connection = create_db_connection()
+        if not connection:
+            return
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT hashed_password FROM UserInfo WHERE username = %s", (username,))
+        result = cursor.fetchone()
+
+        if result and bcrypt.checkpw(current_password, result[0].encode('utf-8')):
+            new_hashed_password = bcrypt.hashpw(new_password, bcrypt.gensalt())
+            try:
+                cursor.execute("UPDATE UserInfo SET hashed_password = %s WHERE username = %s", (new_hashed_password.decode('utf-8'), username))
+                connection.commit()
+                messagebox.showinfo("Success", "Password updated successfully")
+            except mysql.connector.Error as err:
+                messagebox.showerror("Error", f"Failed to update password: {err}")
+        else:
+            messagebox.showerror("Error", "Current password is incorrect or username does not exist")
+
+        cursor.close()
+        connection.close()
+    
     def login_user(self):
         username = self.username_entry.get()
         password = self.password_entry.get().encode('utf-8')
