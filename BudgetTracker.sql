@@ -2,6 +2,7 @@ DROP DATABASE BudgetTracker;
 CREATE DATABASE BudgetTracker;
 use BudgetTracker;
 
+-- drop table budget;
 -- drop table spendinglimit;
 -- drop table savinggoalpercat;
 -- drop table income;
@@ -54,36 +55,45 @@ CREATE TABLE spendinglimit (
     spendinglimitId INT AUTO_INCREMENT PRIMARY KEY
 );
 
+CREATE TABLE budget (
+    budgetId INT AUTO_INCREMENT PRIMARY KEY,
+	user_id INT,
+    amount DECIMAL(10, 2) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    budgetDate DATE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES userinfo(user_id)
+);
+
 -- Insert data into userinfo
-INSERT INTO userinfo (username, hashed_password, email, role) VALUES 
-('johndoe', 'hashedpass1', 'johndoe@example.com', 'user'),
-('janedoe', 'hashedpass2', 'janedoe@example.com', 'analyst'),
-('adminuser', 'hashedpass3', 'admin@example.com', 'admin'),
-('bobbuilder', 'hashedpass4', 'bob@example.com', 'businessOwner');
+INSERT INTO userinfo (user_id, username, hashed_password, email, role) VALUES 
+(1, 'johndoe', 'hashedpass1', 'johndoe@example.com', 'user'),
+(2, 'janedoe', 'hashedpass2', 'janedoe@example.com', 'admin'),
+(3, 'adminuser', 'hashedpass3', 'admin@example.com', 'analyst'),
+(4, 'bobbuilder', 'hashedpass4', 'bob@example.com', 'businessOwner');
 
 -- Insert data into expense
 INSERT INTO expense (user_id, amount, category, dateOfTransaction, description) VALUES 
-(1, 120.50, 'Groceries', '2023-10-01', 'Weekly groceries shopping'),
-(1, 50.00, 'Transportation', '2023-10-05', 'Gasoline top-up'),
-(1, 45.00, 'Utilities', '2023-08-07', 'Electricity bill'),
-(1, 78.50, 'Entertainment', '2023-08-08', 'Movie tickets and snacks'),
-(1, 120.00, 'Entertainment', '2023-07-12', 'Winter clothing purchase'),
-(1, 60.00, 'Healthcare', '2023-07-15', 'Monthly prescription meds'),
-(1, 250.00, 'Entertainment', '2023-07-18', 'New headphones'),
+(1, 120.50, 'Home', '2023-10-01', 'Weekly groceries shopping'),
+(1, 50.00, 'Work', '2023-10-05', 'Gasoline top-up'),
+(1, 45.00, 'Home', '2023-08-07', 'Electricity bill'),
+(1, 78.50, 'Fun', '2023-08-08', 'Movie tickets and snacks'),
+(1, 120.00, 'Fun', '2023-07-12', 'Winter clothing purchase'),
+(1, 60.00, 'Health', '2023-07-15', 'Monthly prescription meds'),
+(1, 250.00, 'Fun', '2023-07-18', 'New headphones'),
 (1, 300.00, 'Travel', '2023-04-22', 'Weekend getaway booking'),
-(1, 120.50, 'Groceries', '2023-04-01', 'Weekly groceries shopping'),
-(1, 50.00, 'Transportation', '2023-04-05', 'Gasoline top-up'),
-(1, 45.00, 'Utilities', '2023-04-07', 'Electricity bill'),
-(1, 78.50, 'Entertainment', '2023-02-08', 'Movie tickets and snacks'),
-(1, 120.00, 'Entertainment', '2023-02-12', 'Winter clothing purchase'),
-(1, 60.00, 'Healthcare', '2023-02-15', 'Monthly prescription meds'),
-(1, 250.00, 'Entertainment', '2023-01-18', 'New headphones'),
-(1, 300.00, 'Travel', '2023-01-22', 'Weekend getaway booking'),
-(2, 200.00, 'Work', '2023-10-03', 'Printer ink and paper purchase'),
-(2, 300.00, 'Travel', '2023-10-10', 'Flight booking for business trip'),
-(3, 150.00, 'Work', '2023-10-02', 'Software license renewal'),
+(2, 200.00, 'Sam', '2023-10-03', 'Printer ink and paper purchase'),
+(2, 300.00, 'Ryan', '2023-10-10', 'Flight booking for business trip'),
+(3, 150.00, 'Melanie', '2023-10-02', 'Software license renewal'),
 (4, 1000.00, 'Work', '2023-10-06', 'Materials for new project'),
-(4, 250.00, 'Maintenance', '2023-10-08', 'Office building maintenance');
+(4, 250.00, 'Work', '2023-10-08', 'Office building maintenance'),
+(4, 120.50, 'Home', '2023-04-01', 'Weekly groceries shopping'),
+(4, 50.00, 'Work', '2023-04-05', 'Gasoline top-up'),
+(4, 45.00, 'Home', '2023-04-07', 'Electricity bill'),
+(4, 78.50, 'Fun', '2023-02-08', 'Movie tickets and snacks'),
+(4, 120.00, 'Fun', '2023-02-12', 'Winter clothing purchase'),
+(4, 60.00, 'Health', '2023-02-15', 'Monthly prescription meds'),
+(4, 250.00, 'Fun', '2023-01-18', 'New headphones'),
+(4, 300.00, 'Travel', '2023-01-22', 'Weekend getaway booking');
 
 -- Insert data into income
 INSERT INTO income (user_id, TotalAmountOfIncome, source, dateOfIncome, description) VALUES 

@@ -12,6 +12,8 @@ class MainApplication(tk.Tk):
         tk.Tk.__init__(self)
         self.title("Budget Tracker")
         self.geometry("800x600")
+        self.user_id = None 
+        self.user_role = None
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -34,7 +36,7 @@ class MainApplication(tk.Tk):
                 host='localhost',
                 database='BudgetTracker',
                 user='root',
-                password='Louis269*'  # Consider securing your password
+                password='Louis269*'
             )
             return connection
         except Error as e:
@@ -42,14 +44,12 @@ class MainApplication(tk.Tk):
             return None
 
     def show_frame(self, cont):
-        """Switch frames in the application."""
         frame = self.frames[cont]
         if hasattr(frame, 'update_for_user'):
-            frame.update_for_user(self.user_id)  # Ensure user_id is set correctly elsewhere in your application
+            frame.update_for_user(self.user_id) 
         frame.tkraise()
 
     def setup_menu(self):
-        """Setup the application menu."""
         menu_bar = tk.Menu(self)
         self.config(menu=menu_bar)
         view_menu = tk.Menu(menu_bar, tearoff=0)
@@ -57,7 +57,6 @@ class MainApplication(tk.Tk):
         view_menu.add_command(label="Monthly Spending", command=lambda: self.show_frame("MonthlySpendingPage"))
 
     def test_connection(self):
-        """Test the database connection."""
         try:
             connection = self.create_db_connection()
             if connection.is_connected():

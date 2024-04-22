@@ -26,7 +26,7 @@ class EditPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        self.user_id = None  # Initialized as None
+        self.user_id = None 
 
         self.top_frame = tk.Frame(self)
         self.top_frame.pack(side='top', fill='x', expand=False)
