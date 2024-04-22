@@ -27,7 +27,6 @@ class MainApplication(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame("SplashPage")
-        self.setup_menu()
 
     def create_db_connection(self):
         """Create and return a database connection."""
@@ -36,7 +35,7 @@ class MainApplication(tk.Tk):
                 host='localhost',
                 database='BudgetTracker',
                 user='root',
-                password='Louis269*'
+                password='Database123'
             )
             return connection
         except Error as e:
@@ -49,12 +48,6 @@ class MainApplication(tk.Tk):
             frame.update_for_user(self.user_id) 
         frame.tkraise()
 
-    def setup_menu(self):
-        menu_bar = tk.Menu(self)
-        self.config(menu=menu_bar)
-        view_menu = tk.Menu(menu_bar, tearoff=0)
-        menu_bar.add_cascade(label="View", menu=view_menu)
-        view_menu.add_command(label="Monthly Spending", command=lambda: self.show_frame("MonthlySpendingPage"))
 
     def test_connection(self):
         try:

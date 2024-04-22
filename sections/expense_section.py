@@ -3,10 +3,6 @@ from tkinter import messagebox
 from mysql.connector import Error
 import mysql.connector
 
-import tkinter as tk
-from tkinter import messagebox
-from mysql.connector import Error
-
 class Expense:
     def __init__(self, root, create_db_connection, user_id):
         self.create_db_connection = create_db_connection
@@ -25,7 +21,8 @@ class Expense:
                 INSERT INTO Expense (dateOfTransaction, totalAmountPerId, userID, categoryId)
                 VALUES (%s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (date_of_transaction, total_amount, self.user_id, category_id))
+            # Ensure total_amount is handled correctly as a float or integer
+            cursor.execute(insert_query, (date_of_transaction, float(total_amount), self.user_id, category_id))
             connection.commit()
             messagebox.showinfo("Success", "Expense added successfully")
         except Error as e:
@@ -48,7 +45,7 @@ class Expense:
         except Error as e:
             messagebox.showerror("Error", f"Failed to delete expense: {e}")
         finally:
-            if connection is not None and connection.is_connected():
+            if connection.is_connected():
                 cursor.close()
                 connection.close()
 
@@ -66,7 +63,7 @@ class Expense:
                 SET dateOfTransaction = %s, totalAmountPerId = %s, categoryId = %s
                 WHERE TransactionId = %s AND userId = %s
             """
-            cursor.execute(update_query, (new_date, new_amount, category_id, transaction_id, self.user_id))
+            cursor.execute(update_query, (new_date, float(new_amount), category_id, transaction_id, self.user_id))
             connection.commit()
             messagebox.showinfo("Success", "Expense updated successfully")
         except Error as e:
@@ -126,37 +123,6 @@ class Expense:
 
         update_button = tk.Button(parent, text="Update Expense", command=self.update_expense)
         update_button.pack(fill='x', expand=True, pady=4)
-
-    def update_for_user(self, user_id):
-        self.user_id = user_id  
-        self.refresh_data()
-
-    def refresh_data(self):
-        if not self.user_id:
-            return 
-        connection = create_db_connection()
-        try:
-            cursor = connection.cursor()
-            query = "SELECT dateOfTransaction, totalAmountPerId FROM Expense WHERE userId = %s"
-            cursor.execute(query, (self.user_id,))
-            data = cursor.fetchall()
-            print("Data refreshed for user:", self.user_id)
-        except Exception as e:
-            messagebox.showerror("Error", f"Could not fetch expense data: {e}")
-        finally:
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
-
-
-def test_connection():
-    try:
-        connection = create_db_connection()
-        if connection.is_connected():
-            messagebox.showinfo("Connection Test", "Connected to MySQL database")
-        connection.close()
-    except Error as e:
-        messagebox.showerror("Connection Test", f"Error: {e}")
 
 def create_db_connection():
     connection = None

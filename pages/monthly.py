@@ -24,6 +24,9 @@ class MonthlySpendingPage(tk.Frame):
         self.update_button = tk.Button(self, text="Update", command=self.update_spending)
         self.update_button.pack(pady=10)
 
+    def show_monthly_spending(self):
+        self.controller.show_frame("MonthlySpendingPage")
+        
     def update_spending(self):
         if self.user_id:
             db_connection = self.controller.create_db_connection()
@@ -46,6 +49,7 @@ class MonthlySpendingPage(tk.Frame):
         self.user_id = user_id
         self.user_id_label.config(text=f"User ID: {self.user_id}")
         self.update_spending()
+        self.show_monthly_spending()
 
     def get_monthly_spending(self, user_id, db_connection, role):
         cursor = db_connection.cursor()

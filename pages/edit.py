@@ -16,7 +16,7 @@ def create_db_connection():
             host='localhost',
             database='BudgetTracker',
             user='root',
-            password='Louis269*'
+            password='Database123'
         )
     except Error as e:
         messagebox.showerror("Error", f"Failed to connect to the database: {e}")
@@ -85,6 +85,22 @@ class EditPage(tk.Frame):
     def show_monthly_spending(self):
         self.controller.show_frame("MonthlySpendingPage")
 
+    def setup_menu(self):
+        menu_bar = tk.Menu(self)
+        self.config(menu=menu_bar)
+        view_menu = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="View", menu=view_menu)
+        view_menu.add_command(label="Monthly Spending", command=lambda: self.show_frame("MonthlySpendingPage"))
 
-
-
+    def create_db_connection():
+        connection = None
+        try:
+            connection = mysql.connector.connect(
+                host='localhost',
+                database='BudgetTracker',
+                user='root',
+                password='Database123'
+            )
+        except Error as e:
+            messagebox.showerror("Error", f"Failed to connect to the database: {e}")
+        return connection
