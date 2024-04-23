@@ -15,4 +15,6 @@ Maria Baig
     - Restructured pages files into classes
     - Created a populated database to test the application
 
-
+Mohamad Nachat Karime
+    - Designed and developed a graph page for displaying user financials
+    - Test functionality and GUI design 
