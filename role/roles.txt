@@ -9,3 +9,10 @@ Cedric Mohbat:
     - GUI for splash page
     - created schema
 
+Maria Baig
+    - Created page for displaying monthly spending
+    - Handled different user types in the monthly spending page
+    - Restructured pages files into classes
+    - Created a populated database to test the application
+
+
